@@ -15,7 +15,18 @@ public class FPSController : MonoBehaviour
     public bool m_InvertedYaw;
     public float m_MinPitch;
     public float m_MaxPitch;
+    CharacterController m_CharacterController;
+    public float m_Speed;
+    [Header("Input")]
+    public KeyCode m_UpKeyCode = KeyCode.W;
+    public KeyCode m_DownKeyCode = KeyCode.S;
+    public KeyCode m_LeftKeyCode = KeyCode.A;
+    public KeyCode m_RightKeyCode = KeyCode.D;
 
+    private void Awake()
+    {
+        m_CharacterController = GetComponent<CharacterController>();
+    }
     private void Start()
     {
         m_Yaw = transform.rotation.eulerAngles.y;
@@ -39,5 +50,19 @@ public class FPSController : MonoBehaviour
         transform.rotation = Quaternion.Euler(0.0f, m_Yaw, 0.0f);
         m_PitchController.localRotation = Quaternion.Euler(m_Pitch, 0.0f, 0.0f);
 
+        Vector3 l_Direction = Vector3.zero;
+
+        if (Input.GetKey(m_RightKeyCode))
+            l_Direction += transform.right;
+        else if (Input.GetKey(m_LeftKeyCode))
+            l_Direction -= transform.right;
+
+        if (Input.GetKey(m_UpKeyCode))
+            l_Direction += transform.forward;
+        else if (Input.GetKey(m_DownKeyCode))
+            l_Direction -= transform.forward;
+
+        l_Direction.Normalize();
+        transform.position = transform.position + l_Direction * m_Speed *  Time.deltaTime;
     }
 }
