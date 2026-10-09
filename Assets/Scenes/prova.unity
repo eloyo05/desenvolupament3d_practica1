@@ -1208,7 +1208,7 @@ Light:
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
-    m_Bias: 0.05
+    m_Bias: 0
     m_NormalBias: 0.4
     m_NearPlane: 0.2
     m_CullingMatrixOverride:
@@ -1241,7 +1241,7 @@ Light:
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_ColorTemperature: 6570
+  m_ColorTemperature: 2588
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
@@ -1612,9 +1612,9 @@ SceneRoots:
   m_Roots:
   - {fileID: 1035041802}
   - {fileID: 525343445}
-  - {fileID: 432574514}
   - {fileID: 420150800}
   - {fileID: 389023988}
   - {fileID: 1242514583}
+  - {fileID: 432574514}
   - {fileID: 25109812}
   - {fileID: 1845844450}
