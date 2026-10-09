@@ -2,8 +2,7 @@ using UnityEngine;
 
 public class FPSController : MonoBehaviour
 {
-
-
+    bool m_AngleLocked = false;
     public Transform m_PitchController;
 
     float m_Yaw;
@@ -20,7 +19,7 @@ public class FPSController : MonoBehaviour
     public float m_Speed;
     public float m_SprintSpeed;
     public float m_JumpSpeed;
-
+    
     [Header("Input")]
     public KeyCode m_UpKeyCode = KeyCode.W;
     public KeyCode m_DownKeyCode = KeyCode.S;
@@ -28,6 +27,22 @@ public class FPSController : MonoBehaviour
     public KeyCode m_RightKeyCode = KeyCode.D;
     public KeyCode m_JumpKeyCode = KeyCode.Space;
     public KeyCode m_SprintKeyCode = KeyCode.LeftShift;
+    public KeyCode m_ReloadKeyCode = KeyCode.R;
+    public KeyCode m_DebugLockAngleKeyCode = KeyCode.I;
+    public KeyCode m_DebugLogCursorKeyCode = KeyCode.O;    
+    public int m_ShootButton = 0;
+
+    [Header("Shoot")]
+    public Camera m_Camera;
+    public float m_MaxShootDistance = 200.0f;
+    public LayerMask m_ShootLayerMask;
+    public GameObject m_HitParticlesPrefab;
+
+    [Header("Animations")]
+    public Animation m_Animation;
+    public AnimationClip m_IdleAnimationClip;
+    public AnimationClip m_ShootAnimationClip;
+    public AnimationClip m_ReloadAnimationClip;
 
     private void Awake()
     {
@@ -37,9 +52,23 @@ public class FPSController : MonoBehaviour
     {
         m_Yaw = transform.rotation.eulerAngles.y;
         m_Pitch = transform.rotation.eulerAngles.x;
+        Cursor.lockState = CursorLockMode.Locked;
+        SetIdleWeaponAnimation();
     }
     private void Update()
     {
+        if (Input.GetKeyDown(m_DebugLockAngleKeyCode))
+            m_AngleLocked = !m_AngleLocked;
+        if (Input.GetKeyDown(m_DebugLogCursorKeyCode))
+        {
+            /* (Input.GetKeyDown(m_DebugLogCursorKeyCode))
+                Cursor.lockState = CursorLockMode.Locked;
+            else
+                Cursor.lockState = CursorLockMode.None;*/
+
+            Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
+        }
+
         float l_mouseX = Input.GetAxis("Mouse X");
         float l_mouseY = Input.GetAxis("Mouse Y");
        
@@ -47,6 +76,11 @@ public class FPSController : MonoBehaviour
             l_mouseX =- l_mouseX;
         if (m_InvertedPitch)
             l_mouseY =- l_mouseY;
+        if (m_AngleLocked)
+        {
+            m_Yaw = m_Yaw + l_mouseX * m_yawSpeed * Time.deltaTime;
+            m_Pitch = m_Pitch + l_mouseY * m_PitchSpeed * Time.deltaTime;
+        }
 
         m_Yaw += l_mouseX * m_yawSpeed * Time.deltaTime;
         m_Pitch += l_mouseY * m_PitchSpeed * Time.deltaTime;
@@ -90,5 +124,65 @@ public class FPSController : MonoBehaviour
         m_VerticalSpeed = 0.0f;
         else if((l_CollisionFlags & CollisionFlags.CollidedAbove) != 0 && m_VerticalSpeed > 0.0f) //màscara binària
             m_VerticalSpeed = 0.0f;
+
+       
+        
+        if (CanShoot() && MustShoot())
+        {
+            Shoot();
+        }
+        if (CanReload() && MustReload())
+        {
+            Reload();
+        }
+
+        bool CanReload()
+        {
+            return true;
+        }
+        bool MustReload()
+        {
+            return Input.GetKeyDown(m_ReloadKeyCode);
+        }
+        void Reload()
+        {
+            SetReloadWeaponAnimation();
+        }
+        bool CanShoot()
+        {
+            return true;
+        }
+        bool MustShoot()
+        {
+            return Input.GetMouseButtonDown(m_ShootButton);
+        }
+        void Shoot()
+        {
+            SetShootWeaponAnimation();
+            Ray l_Ray = m_Camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
+
+            if (Physics.Raycast(l_Ray, out RaycastHit l_RaycastHit, m_MaxShootDistance, m_ShootLayerMask.value))            
+                CreateShootHitParticles(l_RaycastHit.point, l_RaycastHit.normal);            
+        }        
+    }
+    void CreateShootHitParticles(Vector3 Position, Vector3 p_Normal)
+    {
+        GameObject l_GameObject = GameObject.Instantiate(m_HitParticlesPrefab, GameController.GetGameController().m_DestroyObjects);
+        l_GameObject.transform.position = Position;
+        l_GameObject.transform.rotation = Quaternion.LookRotation(p_Normal);
+    }
+    void SetIdleWeaponAnimation()
+    {
+        m_Animation.CrossFade(m_IdleAnimationClip.name, 0.1f);
+    }
+    void SetShootWeaponAnimation()
+    {
+        m_Animation.CrossFade(m_ShootAnimationClip.name, 0.1f);
+        m_Animation.CrossFadeQueued(m_IdleAnimationClip.name, 0.3f);
+    }
+    void SetReloadWeaponAnimation()
+    {
+        m_Animation.CrossFade(m_ReloadAnimationClip.name, 0.1f);
+        m_Animation.CrossFadeQueued(m_IdleAnimationClip.name, 0.3f);
     }
 }
