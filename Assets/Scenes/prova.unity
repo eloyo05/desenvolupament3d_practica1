@@ -897,10 +897,15 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 55
   m_HitParticlesPrefab: {fileID: 8109941570301090915, guid: a6614e51e9beb8f44b3486dc8cec1bab, type: 3}
+  m_Magazine: 25
   m_Animation: {fileID: 432574517}
   m_IdleAnimationClip: {fileID: 7400000, guid: 7fa2f4e007450c745b2318ee75a8d4a2, type: 2}
   m_ShootAnimationClip: {fileID: 7400000, guid: d3073a736736a4644acdfc31a53f1907, type: 2}
   m_ReloadAnimationClip: {fileID: 7400000, guid: 7597ec0f2b9223d43ab9053e354ff655, type: 2}
+  m_Health: 100
+  m_MaxHealth: 100
+  m_Shield: 100
+  m_MaxShield: 100
 --- !u!143 &432574516
 CharacterController:
   m_ObjectHideFlags: 0
