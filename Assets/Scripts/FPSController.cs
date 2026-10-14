@@ -37,12 +37,19 @@ public class FPSController : MonoBehaviour
     public float m_MaxShootDistance = 200.0f;
     public LayerMask m_ShootLayerMask;
     public GameObject m_HitParticlesPrefab;
+    public int m_Magazine = 25;
 
     [Header("Animations")]
     public Animation m_Animation;
     public AnimationClip m_IdleAnimationClip;
     public AnimationClip m_ShootAnimationClip;
     public AnimationClip m_ReloadAnimationClip;
+
+    [Header("Health")]
+    public double m_Health = 100;
+    public double m_MaxHealth = 100;
+    public double m_Shield = 100;
+    public double m_MaxShield = 100;
 
     private void Awake()
     {
@@ -125,11 +132,11 @@ public class FPSController : MonoBehaviour
         else if((l_CollisionFlags & CollisionFlags.CollidedAbove) != 0 && m_VerticalSpeed > 0.0f) //màscara binària
             m_VerticalSpeed = 0.0f;
 
-       
+        
         
         if (CanShoot() && MustShoot())
         {
-            Shoot();
+            Shoot();            
         }
         if (CanReload() && MustReload())
         {
@@ -142,7 +149,14 @@ public class FPSController : MonoBehaviour
         }
         bool MustReload()
         {
-            return Input.GetKeyDown(m_ReloadKeyCode);
+
+            if (Input.GetKeyDown(m_ReloadKeyCode) && m_Magazine < 25)
+            {
+                m_Magazine = 25;
+                return true;
+            }
+            else
+                return false;
         }
         void Reload()
         {
@@ -150,7 +164,10 @@ public class FPSController : MonoBehaviour
         }
         bool CanShoot()
         {
-            return true;
+            if (m_Magazine <= 0)
+                return false;
+            else
+                return true;
         }
         bool MustShoot()
         {
@@ -159,6 +176,8 @@ public class FPSController : MonoBehaviour
         void Shoot()
         {
             SetShootWeaponAnimation();
+            m_Magazine -= 1;
+
             Ray l_Ray = m_Camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
 
             if (Physics.Raycast(l_Ray, out RaycastHit l_RaycastHit, m_MaxShootDistance, m_ShootLayerMask.value))            
@@ -184,5 +203,22 @@ public class FPSController : MonoBehaviour
     {
         m_Animation.CrossFade(m_ReloadAnimationClip.name, 0.1f);
         m_Animation.CrossFadeQueued(m_IdleAnimationClip.name, 0.3f);
+    }
+
+    void HurtPlayer(int damage)
+    {
+        if (m_Shield > 0)
+        {
+            m_Shield -= damage * 0.75;
+            m_Health -= damage * 0.25;
+        }
+        else
+        {
+            m_Shield = 0;
+            m_Health -= damage;
+        }
+
+
+
     }
 }
