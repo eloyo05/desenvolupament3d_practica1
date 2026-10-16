@@ -221,4 +221,16 @@ public class FPSController : MonoBehaviour
 
 
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Item"))
+        {
+            Item l_Item = other.GetComponent<Item>();
+            if(l_Item.CanPick())
+            {
+                l_Item.Pick();
+            }
+        }
+    }
 }
