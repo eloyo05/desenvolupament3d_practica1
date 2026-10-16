@@ -37,6 +37,7 @@ public class FPSController : MonoBehaviour
     public float m_MaxShootDistance = 200.0f;
     public LayerMask m_ShootLayerMask;
     public GameObject m_HitParticlesPrefab;
+    public int m_MaxMagazine = 25;
     public int m_Magazine = 25;
 
     [Header("Animations")]
@@ -61,6 +62,9 @@ public class FPSController : MonoBehaviour
         m_Pitch = transform.rotation.eulerAngles.x;
         Cursor.lockState = CursorLockMode.Locked;
         SetIdleWeaponAnimation();
+        m_Health = m_MaxHealth;
+        m_Shield = m_MaxShield;
+        m_Magazine = m_MaxMagazine;
     }
     private void Update()
     {

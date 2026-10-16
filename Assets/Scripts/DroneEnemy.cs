@@ -20,6 +20,7 @@ public class DroneEnemy : MonoBehaviour
     TState m_CurrentState=TState.IDLE;
     public List<Transform> m_Waypoints;
     int m_CurrentPatrolId;
+    public float m_ChaseDistance=5.0f;
     //CREAR EMPTY DE WAYPOYINT I DINS CREAR ELS WAYPOYINS QUE RECORRERÀ L'ENEMIC PER PATRULLAR (FOTO AL MOBIL 16/10) ARROSSEGARLOS A LA LLISTA DE L'INSPECTOR DEL SCRIPT DE DRONE ENEMY
 
     private void Awake()
@@ -137,6 +138,12 @@ public class DroneEnemy : MonoBehaviour
     void UpdateChaseState()
     {
         // Implement chase behavior
+    }
+    void SetNextChasePosition()
+    {
+        Vector3 l_PlayerPosition = GameController.GetGameController().GetPlayer().transform.position;
+        Vector3 l_Direction = (l_PlayerPosition - transform.position).normalized;
+        m_NavMeshAgent.destination = l_PlayerPosition - l_Direction * m_ChaseDistance;
     }
     void UpdateHitState()
     {

@@ -20,7 +20,7 @@ public class PlayerHUD : MonoBehaviour
             "Escut: " + m_Player.m_Shield + " / " + m_Player.m_MaxShield, l_Style);
 
         GUI.Label(new Rect(20, 90, 350, 35),
-            "Munició: " + m_Player.m_Magazine + " / " + "25", l_Style);
+            "Munició: " + m_Player.m_Magazine + " / " + m_Player.m_MaxMagazine, l_Style);
     }
 
 }

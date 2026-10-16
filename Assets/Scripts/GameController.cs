@@ -5,6 +5,7 @@ public class GameController : MonoBehaviour
     public Transform m_DestroyObjects;
     public static GameController m_GameController = null;
     public KeyCode m_RestartKeyCode = KeyCode.F5;
+    public FPSController m_Player;
 
     private void Start()
     {
@@ -36,5 +37,13 @@ public class GameController : MonoBehaviour
         {
             Restart();
         }
+    }
+    public void SetPlayer(FPSController Player)
+    {
+        m_Player = Player;
+    }
+    public FPSController GetPlayer()
+    {
+        return m_Player;
     }
 }
