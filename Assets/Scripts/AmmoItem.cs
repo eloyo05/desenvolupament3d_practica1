@@ -11,7 +11,7 @@ public class AmmoItem : Item
     public override void Pick()
     {
         base.Pick();
-        Debug.Log("pick life item " + m_AmmoCount);
+        Debug.Log("pick ammo item " + m_AmmoCount);
     }
 
 }
