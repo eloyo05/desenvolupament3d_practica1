@@ -195,8 +195,26 @@ public class FPSController : MonoBehaviour
 
             Ray l_Ray = m_Camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
 
-            if (Physics.Raycast(l_Ray, out RaycastHit l_RaycastHit, m_MaxShootDistance, m_ShootLayerMask.value))            
-                CreateShootHitParticles(l_RaycastHit.point, l_RaycastHit.normal);            
+            /*if (Physics.Raycast(l_Ray, out RaycastHit l_RaycastHit, m_MaxShootDistance, m_ShootLayerMask.value))            
+                CreateShootHitParticles(l_RaycastHit.point, l_RaycastHit.normal);     */ //ABANS
+            if (Physics.Raycast(l_Ray, out RaycastHit l_RaycastHit, m_MaxShootDistance, m_ShootLayerMask.value))
+            {
+                CreateShootHitParticles(l_RaycastHit.point, l_RaycastHit.normal);
+                ShootingGalleryButton l_GalleryButton = l_RaycastHit.collider.GetComponentInParent<ShootingGalleryButton>();
+
+                if (l_GalleryButton != null)
+                {
+                    l_GalleryButton.Hit();
+                    return;
+                }
+
+                ShootingGalleryTarget l_GalleryTarget = l_RaycastHit.collider.GetComponentInParent<ShootingGalleryTarget>();
+
+                if (l_GalleryTarget != null)
+                {
+                    l_GalleryTarget.Hit();
+                }
+            } //ARA
         }        
     }
     void CreateShootHitParticles(Vector3 Position, Vector3 p_Normal)
