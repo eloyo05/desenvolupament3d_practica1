@@ -145,7 +145,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &66967389
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -498,6 +498,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameController
   m_DestroyObjects: {fileID: 309173597}
   m_RestartKeyCode: 286
+  m_Player: {fileID: 0}
 --- !u!4 &325104990
 Transform:
   m_ObjectHideFlags: 0
@@ -652,6 +653,37 @@ Transform:
   m_Children:
   - {fileID: 1387947739}
   m_Father: {fileID: 188209347}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &388596006
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 388596007}
+  m_Layer: 0
+  m_Name: Eyes
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &388596007
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 388596006}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.013, y: 0.83, z: 0.31}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 1552845003}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &390186954
 PrefabInstance:
@@ -2354,6 +2386,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1693963089}
+  - {fileID: 388596007}
   m_Father: {fileID: 188209347}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1552845004
@@ -2372,6 +2405,15 @@ MonoBehaviour:
   - {fileID: 2100972831}
   - {fileID: 1010568968}
   - {fileID: 1749179991}
+  m_MinAttackDistance: 5
+  m_MaxChaseDistance: 20
+  m_ShootMaxDistance: 8
+  m_HearingDistance: 10
+  m_AlertTime: 3
+  m_AlertRotationSpeed: 120
+  m_Eyes: {fileID: 388596007}
+  m_ViewDistance: 20
+  m_MinViewDot: 0.5
 --- !u!1 &1591748595
 GameObject:
   m_ObjectHideFlags: 0
@@ -2473,6 +2515,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 55
   m_HitParticlesPrefab: {fileID: 8109941570301090915, guid: a6614e51e9beb8f44b3486dc8cec1bab, type: 3}
+  m_MaxMagazine: 25
   m_Magazine: 25
   m_Animation: {fileID: 1591748596}
   m_IdleAnimationClip: {fileID: 7400000, guid: 7fa2f4e007450c745b2318ee75a8d4a2, type: 2}
@@ -2491,7 +2534,7 @@ Transform:
   m_GameObject: {fileID: 1591748595}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1.62}
+  m_LocalPosition: {x: 0, y: 0, z: 36.23}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
