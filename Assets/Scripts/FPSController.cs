@@ -65,6 +65,8 @@ public class FPSController : MonoBehaviour
         m_Health = m_MaxHealth;
         m_Shield = m_MaxShield;
         m_Magazine = m_MaxMagazine;
+
+        GameController.GetGameController().SetPlayer(this);
     }
     private void Update()
     {
@@ -87,19 +89,17 @@ public class FPSController : MonoBehaviour
             l_mouseX =- l_mouseX;
         if (m_InvertedPitch)
             l_mouseY =- l_mouseY;
-        if (m_AngleLocked)
+
+        if (!m_AngleLocked)
         {
-            m_Yaw = m_Yaw + l_mouseX * m_yawSpeed * Time.deltaTime;
-            m_Pitch = m_Pitch + l_mouseY * m_PitchSpeed * Time.deltaTime;
+            m_Yaw += l_mouseX * m_yawSpeed * Time.deltaTime;
+            m_Pitch += l_mouseY * m_PitchSpeed * Time.deltaTime;
+
+            m_Pitch = Mathf.Clamp(m_Pitch, m_MinPitch, m_MaxPitch);
+
+            transform.rotation = Quaternion.Euler(0.0f, m_Yaw, 0.0f);
+            m_PitchController.localRotation = Quaternion.Euler(m_Pitch, 0.0f, 0.0f);
         }
-
-        m_Yaw += l_mouseX * m_yawSpeed * Time.deltaTime;
-        m_Pitch += l_mouseY * m_PitchSpeed * Time.deltaTime;
-
-        m_Pitch = Mathf.Clamp(m_Pitch, m_MinPitch, m_MaxPitch);
-
-        transform.rotation = Quaternion.Euler(0.0f, m_Yaw, 0.0f);
-        m_PitchController.localRotation = Quaternion.Euler(m_Pitch, 0.0f, 0.0f);
 
         Vector3 l_Direction = Vector3.zero;
         Vector3 l_Right = transform.right;
@@ -110,13 +110,13 @@ public class FPSController : MonoBehaviour
         l_Forward.Normalize();
 
         if (Input.GetKey(m_RightKeyCode))
-            l_Direction = l_Right;
-        else if (Input.GetKey(m_LeftKeyCode))
+            l_Direction += l_Right;
+        if (Input.GetKey(m_LeftKeyCode))
             l_Direction -= l_Right;
 
         if (Input.GetKey(m_UpKeyCode))
-            l_Direction = l_Forward;
-        else if (Input.GetKey(m_DownKeyCode))
+            l_Direction += l_Forward;
+        if (Input.GetKey(m_DownKeyCode))
             l_Direction -= l_Forward;
 
         float l_Speed = m_Speed;

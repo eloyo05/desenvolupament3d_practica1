@@ -7,16 +7,16 @@ public class GameController : MonoBehaviour
     public KeyCode m_RestartKeyCode = KeyCode.F5;
     public FPSController m_Player;
 
-    private void Start()
+    private void Awake()
     {
        if (m_GameController == null)
        {
             m_GameController = this;
             DontDestroyOnLoad(this);
        }
-       else
-       {
-           GameObject.Destroy(gameObject);
+       else if (m_GameController != this)
+        {
+           Destroy(gameObject);
        }
     }
     static public GameController GetGameController()
