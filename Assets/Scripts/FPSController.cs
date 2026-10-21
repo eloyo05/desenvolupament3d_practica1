@@ -38,7 +38,8 @@ public class FPSController : MonoBehaviour
     public LayerMask m_ShootLayerMask;
     public GameObject m_HitParticlesPrefab;
     public int m_MaxMagazine = 25;
-    public int m_Magazine = 25;
+    public int m_Magazine;
+    public int m_TotalAmmo = 100;
 
     [Header("Animations")]
     public Animation m_Animation;
@@ -46,7 +47,7 @@ public class FPSController : MonoBehaviour
     public AnimationClip m_ShootAnimationClip;
     public AnimationClip m_ReloadAnimationClip;
 
-    [Header("Health")]
+    [Header("Stats")]
     public double m_Health = 100;
     public double m_MaxHealth = 100;
     public double m_Shield = 100;
@@ -154,13 +155,23 @@ public class FPSController : MonoBehaviour
         bool MustReload()
         {
 
-            if (Input.GetKeyDown(m_ReloadKeyCode) && m_Magazine < 25)
+            if (Input.GetKeyDown(m_ReloadKeyCode) && m_Magazine < m_MaxMagazine && m_TotalAmmo >= m_MaxMagazine)
             {
-                m_Magazine = 25;
+                int l_AmmoNeeded = m_MaxMagazine - m_Magazine;
+                m_Magazine = m_MaxMagazine;
+                m_TotalAmmo -= l_AmmoNeeded;
+                return true;
+            }
+            else if (Input.GetKeyDown(m_ReloadKeyCode) && m_Magazine < m_MaxMagazine && m_TotalAmmo < m_MaxMagazine)
+            {
+                m_Magazine += m_TotalAmmo;
+                m_TotalAmmo = 0;
                 return true;
             }
             else
-                return false;
+            { 
+                return false; 
+            }
         }
         void Reload()
         {
@@ -231,9 +242,9 @@ public class FPSController : MonoBehaviour
         if (other.CompareTag("Item"))
         {
             Item l_Item = other.GetComponent<Item>();
-            if(l_Item.CanPick())
+            if(l_Item.CanPick() && l_Item!=null)
             {
-                l_Item.Pick();
+                l_Item.Pick(this);
             }
         }
     }

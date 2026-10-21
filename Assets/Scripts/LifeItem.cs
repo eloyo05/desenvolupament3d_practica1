@@ -8,10 +8,15 @@ public class LifeItem : Item
     {
         return true;
     }
-    public override void Pick()
+    public override void Pick(FPSController p_Player)
     {
-        base.Pick();
+        p_Player.m_Health = System.Math.Min(
+            p_Player.m_Health + m_LifePoints,
+            p_Player.m_MaxHealth
+        );
+
         Debug.Log("pick life item "+m_LifePoints);
+        base.Pick(p_Player);
     }
 
 }
