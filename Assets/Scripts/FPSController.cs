@@ -1,3 +1,5 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class FPSController : MonoBehaviour
@@ -19,7 +21,10 @@ public class FPSController : MonoBehaviour
     public float m_Speed;
     public float m_SprintSpeed;
     public float m_JumpSpeed;
-    
+
+    Vector3 m_StartPosition;
+    Quaternion m_StartRotation;
+
     [Header("Input")]
     public KeyCode m_UpKeyCode = KeyCode.W;
     public KeyCode m_DownKeyCode = KeyCode.S;
@@ -66,6 +71,8 @@ public class FPSController : MonoBehaviour
         m_Health = m_MaxHealth;
         m_Shield = m_MaxShield;
         m_Magazine = m_MaxMagazine;
+        m_StartPosition = transform.position;
+        m_StartRotation = transform.rotation;
 
         GameController.GetGameController().SetPlayer(this);
     }
@@ -203,7 +210,8 @@ public class FPSController : MonoBehaviour
                 {
                     l_RaycastHit.collider.GetComponentInParent<HitCollider>().Hit();
                 }
-                else                {
+                else                
+                {
                     CreateShootHitParticles(l_RaycastHit.point, l_RaycastHit.normal);                    
                 }
 
@@ -256,9 +264,6 @@ public class FPSController : MonoBehaviour
             m_Shield = 0;
             m_Health -= damage;
         }
-
-
-
     }
 
     private void OnTriggerEnter(Collider other)
@@ -269,6 +274,34 @@ public class FPSController : MonoBehaviour
             if(l_Item.CanPick() && l_Item!=null)
             {
                 l_Item.Pick(this);
+            }
+        }
+    }
+    private void Restart()
+    {
+        m_CharacterController.enabled = false;
+        transform.position = m_StartPosition;
+        transform.rotation = m_StartRotation;
+        m_CharacterController.enabled = true;
+    }
+    void UpdateLifeBarEnemies()
+    {
+        GameController l_GameController = GameController.GetGameController();
+        List<DroneEnemy> l_Enemies = l_GameController.GetEnemies();
+
+        LifeBarElementUI l_LifeBarElementUI = l_GameController.GetInGameUI().m_LifeBarElementUI;
+        l_LifeBarElementUI.Hide();
+
+        foreach(DroneEnemy l_Enemy in l_Enemies)
+        {
+            Vector3 l_ViewportPoint = m_Camera.WorldToViewportPoint(l_Enemy.m_LifeBarPosition.position);
+            bool l_EnemyIsVisible = l_ViewportPoint.z > 0.0f && l_ViewportPoint.x > 0 && l_ViewportPoint.x <= 1 && l_ViewportPoint.y > 0 && l_ViewportPoint.y < 1;
+
+            if (l_EnemyIsVisible)
+            {
+                Vector2 l_Position = new Vector2(l_ViewportPoint.x * 1920.0f,l_ViewportPoint.y * 1080.0f);
+                l_LifeBarElementUI.Show(l_Position, l_Enemy.GetLife()/(float)l_Enemy.m_MaxLife);  
+                break;
             }
         }
     }

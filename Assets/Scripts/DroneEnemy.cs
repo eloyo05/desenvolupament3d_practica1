@@ -24,9 +24,10 @@ public class DroneEnemy : MonoBehaviour
     public float m_MaxChaseDistance = 20.0f;
     public float m_ShootMaxDistance = 8.0f;
     //CREAR EMPTY DE WAYPOYINT I DINS CREAR ELS WAYPOYINS QUE RECORRERÀ L'ENEMIC PER PATRULLAR (FOTO AL MOBIL 16/10) ARROSSEGARLOS A LA LLISTA DE L'INSPECTOR DEL SCRIPT DE DRONE ENEMY
-
+    
     public int m_MaxLife = 50;
     int m_Life = 50;
+    public Transform m_LifeBarPosition;
 
     [Header("Hits")]
     public int m_HelixColliderAmount = 10;
@@ -51,7 +52,12 @@ public class DroneEnemy : MonoBehaviour
 
         m_NavMeshAgent = GetComponent<NavMeshAgent>();
     }
-
+    private void Start()
+    {
+        m_Life = m_MaxLife;
+        SetIdleState();
+        GameController.GetGameController().AddEnemy(this);
+    }
     private void Update()
     {
         switch(m_CurrentState)
@@ -322,6 +328,8 @@ public class DroneEnemy : MonoBehaviour
             Debug.Log("Drone hit! Remaining life: " + m_Life);
         }   
     }
-
-
+    public int GetLife()
+    {
+        return m_Life;
+    }
 }

@@ -5,7 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Item
-  - Collider
+  - HitCollider
   layers:
   - Default
   - TransparentFX

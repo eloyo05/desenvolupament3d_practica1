@@ -1,11 +1,16 @@
+using NUnit.Framework;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class GameController : MonoBehaviour
 {
     public Transform m_DestroyObjects;
-    public static GameController m_GameController = null;
+    static GameController m_GameController = null;
     public KeyCode m_RestartKeyCode = KeyCode.F5;
-    public FPSController m_Player;
+    
+    FPSController m_Player;
+    List<DroneEnemy> m_Enemies = new List<DroneEnemy>();
+    InGameUI m_InGameUI;
 
     private void Awake()
     {
@@ -22,7 +27,7 @@ public class GameController : MonoBehaviour
     static public GameController GetGameController()
     {
         return m_GameController;
-    }
+    }    
     public void Restart()
     {
         Debug.Log("Restarting game...");
@@ -45,5 +50,21 @@ public class GameController : MonoBehaviour
     public FPSController GetPlayer()
     {
         return m_Player;
+    }
+    public void AddEnemy(DroneEnemy Enemy)
+    {
+        m_Enemies.Add(Enemy);
+    }
+    public void SetInGameUI(InGameUI InGameUI)
+    {
+        m_InGameUI = InGameUI;
+    }
+    public InGameUI GetInGameUI()
+    {
+        return m_InGameUI;
+    }
+    public List<DroneEnemy> GetEnemies()
+    {
+        return m_Enemies;
     }
 }
