@@ -45,6 +45,7 @@ public class FPSController : MonoBehaviour
     public int m_MaxMagazine = 25;
     public int m_Magazine;
     public int m_TotalAmmo = 100;
+    public CPoolElements m_HitParticlesPool;
 
     [Header("Animations")]
     public Animation m_Animation;
@@ -73,6 +74,7 @@ public class FPSController : MonoBehaviour
         m_Magazine = m_MaxMagazine;
         m_StartPosition = transform.position;
         m_StartRotation = transform.rotation;
+        m_HitParticlesPool = new CPoolElements(10, m_HitParticlesPrefab);
 
         GameController.GetGameController().SetPlayer(this);
     }
@@ -230,10 +232,12 @@ public class FPSController : MonoBehaviour
                 }
             } //ARA
         }        
+        UpdateLifeBarEnemies();
     }
     void CreateShootHitParticles(Vector3 Position, Vector3 p_Normal)
     {
-        GameObject l_GameObject = GameObject.Instantiate(m_HitParticlesPrefab, GameController.GetGameController().m_DestroyObjects);
+        GameObject l_GameObject = m_HitParticlesPool.GetNextElement();      
+        l_GameObject.SetActive(true);
         l_GameObject.transform.position = Position;
         l_GameObject.transform.rotation = Quaternion.LookRotation(p_Normal);
     }
