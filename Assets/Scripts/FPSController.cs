@@ -199,9 +199,15 @@ public class FPSController : MonoBehaviour
                 CreateShootHitParticles(l_RaycastHit.point, l_RaycastHit.normal);     */ //ABANS
             if (Physics.Raycast(l_Ray, out RaycastHit l_RaycastHit, m_MaxShootDistance, m_ShootLayerMask.value))
             {
-                CreateShootHitParticles(l_RaycastHit.point, l_RaycastHit.normal);
-                ShootingGalleryButton l_GalleryButton = l_RaycastHit.collider.GetComponentInParent<ShootingGalleryButton>();
+                if (l_RaycastHit.collider.CompareTag("HitCollider"))
+                {
+                    l_RaycastHit.collider.GetComponentInParent<HitCollider>().Hit();
+                }
+                else                {
+                    CreateShootHitParticles(l_RaycastHit.point, l_RaycastHit.normal);                    
+                }
 
+                ShootingGalleryButton l_GalleryButton = l_RaycastHit.collider.GetComponentInParent<ShootingGalleryButton>();
                 if (l_GalleryButton != null)
                 {
                     l_GalleryButton.Hit();

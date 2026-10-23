@@ -25,6 +25,14 @@ public class DroneEnemy : MonoBehaviour
     public float m_ShootMaxDistance = 8.0f;
     //CREAR EMPTY DE WAYPOYINT I DINS CREAR ELS WAYPOYINS QUE RECORRERÀ L'ENEMIC PER PATRULLAR (FOTO AL MOBIL 16/10) ARROSSEGARLOS A LA LLISTA DE L'INSPECTOR DEL SCRIPT DE DRONE ENEMY
 
+    public int m_MaxLife = 50;
+    int m_Life = 50;
+
+    [Header("Hits")]
+    public int m_HelixColliderAmount = 10;
+    public int m_HeadColliderAmount = 50;
+    public int m_BodyColliderAmount = 20;
+
     [Header("Perception")]
     public float m_HearingDistance = 10.0f;
     public float m_AlertTime = 3.0f;
@@ -285,7 +293,35 @@ public class DroneEnemy : MonoBehaviour
 
         return false;
     }
-
+    public void Hit(HitCollider.THitColliderType HitColliderType)
+    {
+        int l_LifePoints = 0;
+        switch(HitColliderType)
+        {
+            case HitCollider.THitColliderType.BODY:
+                l_LifePoints = m_BodyColliderAmount;
+                break;
+            case HitCollider.THitColliderType.HEAD:
+                l_LifePoints = m_HeadColliderAmount;
+                break;
+            case HitCollider.THitColliderType.HELIX:
+                l_LifePoints = m_HelixColliderAmount;
+                break;
+            default:
+                Debug.LogError("Unknown hit collider type: " + HitColliderType);
+                break;
+        }
+        m_Life -= l_LifePoints;
+        if (m_Life <= 0)
+        {
+            SetDieState();
+        }
+        else
+        {
+            SetHitState();
+            Debug.Log("Drone hit! Remaining life: " + m_Life);
+        }   
+    }
 
 
 }
