@@ -12,6 +12,8 @@ public class GameController : MonoBehaviour
     List<DroneEnemy> m_Enemies = new List<DroneEnemy>();
     InGameUI m_InGameUI;
 
+    Fade m_Fade;
+
     private void Awake()
     {
        if (m_GameController == null)
@@ -31,10 +33,10 @@ public class GameController : MonoBehaviour
     public void Restart()
     {
         Debug.Log("Restarting game...");
-        for (int i = 0; i < m_DestroyObjects.childCount; ++i)
-        {
+        for (int i = 0; i < m_DestroyObjects.childCount; ++i)        
             GameObject.Destroy(m_DestroyObjects.GetChild(i).gameObject);
-        }
+        m_Player.Restart();
+        StartCoroutine(m_Fade.FadeOut());
     }
     private void Update()
     {
@@ -67,4 +69,13 @@ public class GameController : MonoBehaviour
     {
         return m_Enemies;
     }
+
+    public void SetFade(Fade _Fade)
+    {
+        m_Fade = _Fade;
+    }
+    public Fade GetFade()
+    {
+        return m_Fade;
+    }   
 }

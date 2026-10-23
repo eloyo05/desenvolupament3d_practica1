@@ -280,8 +280,21 @@ public class FPSController : MonoBehaviour
                 l_Item.Pick(this);
             }
         }
+        else if (other.CompareTag("DeadZone"))
+        {
+            Kill();
+        }
     }
-    private void Restart()
+
+    void Kill()
+    {
+        StartCoroutine(GameController.GetGameController().GetFade().FadeIn(() =>
+        {
+            GameController.GetGameController().GetFade().gameObject.SetActive(false);
+            GameController.GetGameController().Restart();
+        }));
+    }
+    public void Restart()
     {
         m_CharacterController.enabled = false;
         transform.position = m_StartPosition;
