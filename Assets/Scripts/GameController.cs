@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -56,6 +55,10 @@ public class GameController : MonoBehaviour
     public void AddEnemy(DroneEnemy Enemy)
     {
         m_Enemies.Add(Enemy);
+    }
+    public void RemoveEnemy(DroneEnemy l_Enemy)
+    {
+        m_Enemies.Remove(l_Enemy);
     }
     public void SetInGameUI(InGameUI InGameUI)
     {

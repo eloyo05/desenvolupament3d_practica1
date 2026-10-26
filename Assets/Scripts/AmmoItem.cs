@@ -4,19 +4,16 @@ public class AmmoItem : Item
 {
     public int m_AmmoCount = 20;
 
-    public override bool CanPick()
+    public override bool CanPick(FPSController l_Player)
     {
-        return true;
+        return l_Player.m_TotalAmmo < l_Player.m_MaxTotalAmmo;
     }
-    public override void Pick(FPSController p_Player)
+    public override void Pick(FPSController l_Player)
     {
-        p_Player.m_Magazine = Mathf.Min(
-            p_Player.m_Magazine + m_AmmoCount,
-            p_Player.m_MaxMagazine
-        );
-        
+        l_Player.m_TotalAmmo = Mathf.Min(l_Player.m_TotalAmmo + m_AmmoCount,l_Player.m_MaxTotalAmmo);
+
         Debug.Log("pick ammo item " + m_AmmoCount);
-        base.Pick(p_Player);
+        base.Pick(l_Player);
     }
 
 }

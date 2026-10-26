@@ -4,19 +4,19 @@ public class LifeItem : Item
 {
     public int m_LifePoints = 20;
 
-    public override bool CanPick()
+    public override bool CanPick(FPSController l_Player)
     {
-        return true;
+        return l_Player.m_Health < l_Player.m_MaxHealth;
     }
-    public override void Pick(FPSController p_Player)
+    public override void Pick(FPSController l_Player)
     {
-        p_Player.m_Health = System.Math.Min(
-            p_Player.m_Health + m_LifePoints,
-            p_Player.m_MaxHealth
+        l_Player.m_Health = System.Math.Min(
+            l_Player.m_Health + m_LifePoints,
+            l_Player.m_MaxHealth
         );
 
         Debug.Log("pick life item "+m_LifePoints);
-        base.Pick(p_Player);
+        base.Pick(l_Player);
     }
 
 }

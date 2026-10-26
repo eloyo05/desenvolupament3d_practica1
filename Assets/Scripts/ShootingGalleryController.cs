@@ -133,17 +133,17 @@ public class ShootingGalleryController : MonoBehaviour
             m_CurrentTarget.m_TimeOnScreen;
     }
 
-    public void TargetHit(ShootingGalleryTarget p_Target)
+    public void TargetHit(ShootingGalleryTarget l_Target)
     {
         if (!m_IsPlaying)
             return;
 
-        if (p_Target != m_CurrentTarget)
+        if (l_Target != m_CurrentTarget)
             return;
 
         m_Score += m_PointsPerTarget;
 
-        p_Target.HideTarget();
+        l_Target.HideTarget();
         m_CurrentTarget = null;
 
         if (m_Score >= m_ScoreToWin)
@@ -155,13 +155,13 @@ public class ShootingGalleryController : MonoBehaviour
         ShowNextTarget();
     }
 
-    void FinishGame(bool p_PlayerWon)
+    void FinishGame(bool l_PlayerWon)
     {
         m_IsPlaying = false;
 
         ResetAllTargets();
 
-        if (p_PlayerWon)
+        if (l_PlayerWon)
         {
             m_Message =
                 "Felicitats! Repte superat i porta oberta";
@@ -216,9 +216,9 @@ public class ShootingGalleryController : MonoBehaviour
         }
     }
 
-    public void SetPlayerInsideGallery(bool p_Inside)
+    public void SetPlayerInsideGallery(bool l_Inside)
     {
-        m_PlayerInsideGallery = p_Inside;
+        m_PlayerInsideGallery = l_Inside;
     }
 
     private void OnGUI()

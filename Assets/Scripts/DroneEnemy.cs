@@ -1,5 +1,4 @@
 
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections.Generic;
@@ -38,8 +37,23 @@ public class DroneEnemy : MonoBehaviour
     public float m_HearingDistance = 10.0f;
     public float m_AlertTime = 3.0f;
     public float m_AlertRotationSpeed = 120.0f;
-
     float m_AlertTimer;
+
+    [Header("Attack")]
+    public int m_AttackDamage = 20;
+    public float m_AttackCooldown = 1.0f;
+    float m_AttackTimer = 0.0f;
+
+    [Header("Hit")]
+    public float m_HitTime = 0.25f;
+    float m_HitTimer = 0.0f;
+    TState m_StateAfterHit = TState.ALERT;
+
+    [Header("Die")]
+    public float m_DieFadeTime = 1.0f;
+    float m_DieTimer = 0.0f;
+
+    Renderer[] m_Renderers;
 
     public Transform m_Eyes;
     public float m_ViewDistance = 20.0f;
@@ -51,6 +65,7 @@ public class DroneEnemy : MonoBehaviour
     {
 
         m_NavMeshAgent = GetComponent<NavMeshAgent>();
+        m_Renderers = GetComponentsInChildren<Renderer>();
     }
     private void Start()
     {
@@ -167,6 +182,10 @@ public class DroneEnemy : MonoBehaviour
     void SetAttackState()
     {
         m_CurrentState = TState.ATTACK;
+
+        m_NavMeshAgent.isStopped = true;
+
+        m_AttackTimer = 0.0f;
     }
     void SetChaseState()
     {
@@ -175,13 +194,31 @@ public class DroneEnemy : MonoBehaviour
 
         SetNextChasePosition();
     }
-    void SetHitState()
+    void SetHitState(TState l_StateAfterHit)
     {
+        m_StateAfterHit = l_StateAfterHit;
+
         m_CurrentState = TState.HIT;
+
+        m_NavMeshAgent.isStopped = true;
+
+        m_HitTimer = m_HitTime;
     }
     void SetDieState()
     {
         m_CurrentState = TState.DIE;
+
+        m_NavMeshAgent.isStopped = true;
+        m_NavMeshAgent.enabled = false;
+
+        Collider[] l_Colliders = GetComponentsInChildren<Collider>();
+
+        foreach (Collider l_Collider in l_Colliders)
+        {
+            l_Collider.enabled = false;
+        }
+
+        m_DieTimer = m_DieFadeTime;
     }
     void UpdateIdleState()
     {
@@ -209,7 +246,44 @@ public class DroneEnemy : MonoBehaviour
     }
     void UpdateAttackState()
     {
-        // Implement attack behavior
+        FPSController l_Player = GameController.GetGameController().GetPlayer();
+        
+        if (l_Player == null)
+            return;
+
+        Vector3 l_Direction = l_Player.transform.position - transform.position;
+
+        l_Direction.y = 0.0f;
+
+        float l_Distance = l_Direction.magnitude;
+
+        if (l_Distance > m_ShootMaxDistance)
+        {
+            SetChaseState();
+            return;
+        }
+
+        if (!SeesPlayer())
+        {
+            SetChaseState();
+            return;
+        }
+
+        if (l_Direction.sqrMagnitude > 0.01f)
+        {
+            Quaternion l_TargetRotation = Quaternion.LookRotation(l_Direction.normalized);
+
+            transform.rotation = Quaternion.RotateTowards(transform.rotation,l_TargetRotation,m_AlertRotationSpeed * Time.deltaTime);
+        }
+
+        m_AttackTimer -= Time.deltaTime;
+
+        if (m_AttackTimer <= 0.0f)
+        {
+            l_Player.HurtPlayer(m_AttackDamage);
+
+            m_AttackTimer =m_AttackCooldown;
+        }
     }
     void UpdateChaseState()
     {
@@ -241,32 +315,80 @@ public class DroneEnemy : MonoBehaviour
     }
     void UpdateHitState()
     {
-        // Implement hit behavior
+        m_HitTimer -= Time.deltaTime;
+
+        if (m_HitTimer > 0.0f)
+            return;
+
+        switch (m_StateAfterHit)
+        {
+            case TState.ALERT:
+                SetAlertState();
+                break;
+
+            case TState.PATROL:
+                SetPatrolState();
+                break;
+
+            case TState.CHASE:
+                SetChaseState();
+                break;
+
+            case TState.ATTACK:
+                SetAttackState();
+                break;
+
+            case TState.IDLE:
+                SetIdleState();
+                break;
+
+            default:
+                SetAlertState();
+                break;
+        }
     }
     void UpdateDieState()
     {
-        // Implement die behavior
+        m_DieTimer -= Time.deltaTime;
+
+        float l_Alpha = Mathf.Clamp01(m_DieTimer/ m_DieFadeTime);
+
+        foreach (Renderer l_Renderer in m_Renderers)
+        {
+            foreach (Material l_Material in l_Renderer.materials)
+            {
+                Color l_Color = l_Material.color;
+
+                l_Color.a = l_Alpha;
+
+                l_Material.color = l_Color;
+            }
+        }
+
+        if (m_DieTimer <= 0.0f)
+        {
+            GameController
+                .GetGameController().RemoveEnemy(this);
+
+            Destroy(gameObject);
+        }
     }
 
     bool HearsPlayer()
     {
-        FPSController l_Player =
-            GameController.GetGameController().GetPlayer();
+        FPSController l_Player = GameController.GetGameController().GetPlayer();
 
         if (l_Player == null)
             return false;
 
-        Vector3 l_Difference =
-            l_Player.transform.position - transform.position;
+        Vector3 l_Difference =l_Player.transform.position - transform.position;
 
-        return l_Difference.sqrMagnitude <=
-               m_HearingDistance * m_HearingDistance;
+        return l_Difference.sqrMagnitude <=  m_HearingDistance * m_HearingDistance;
     }
 
     bool SeesPlayer()
     {
-        FPSController l_Player =
-            GameController.GetGameController().GetPlayer();
+        FPSController l_Player =  GameController.GetGameController().GetPlayer();
 
         if (l_Player == null)
             return false;
@@ -281,52 +403,68 @@ public class DroneEnemy : MonoBehaviour
 
         l_Direction.Normalize();
 
-        float l_Dot =
-            Vector3.Dot(transform.forward, l_Direction);
+        float l_Dot = Vector3.Dot(transform.forward, l_Direction);
 
         if (l_Dot < m_MinViewDot)
             return false;
 
-        if (Physics.Raycast(
-            m_Eyes.position,
-            l_Direction,
-            out RaycastHit l_Hit,
-            l_Distance))
+        if (Physics.Raycast( m_Eyes.position, l_Direction, out RaycastHit l_Hit, l_Distance))
         {
-            return l_Hit.transform == l_Player.transform ||
-                   l_Hit.transform.IsChildOf(l_Player.transform);
+            return l_Hit.transform == l_Player.transform ||  l_Hit.transform.IsChildOf(l_Player.transform);
         }
 
         return false;
     }
-    public void Hit(HitCollider.THitColliderType HitColliderType)
+    public void Hit(HitCollider.THitColliderType l_HitColliderType)
     {
         int l_LifePoints = 0;
-        switch(HitColliderType)
+
+        switch (l_HitColliderType)
         {
             case HitCollider.THitColliderType.BODY:
-                l_LifePoints = m_BodyColliderAmount;
+                l_LifePoints = 0;
                 break;
+
             case HitCollider.THitColliderType.HEAD:
-                l_LifePoints = m_HeadColliderAmount;
+                l_LifePoints =
+                    m_HeadColliderAmount;
                 break;
+
             case HitCollider.THitColliderType.HELIX:
-                l_LifePoints = m_HelixColliderAmount;
+                l_LifePoints =
+                    m_HelixColliderAmount;
                 break;
+
             default:
-                Debug.LogError("Unknown hit collider type: " + HitColliderType);
-                break;
+                Debug.LogError("Unknown hit collider type: " + l_HitColliderType);
+                return;
         }
-        m_Life -= l_LifePoints;
+
+        TState l_PreviousState = m_CurrentState;
+
+        bool l_DidDamage = l_LifePoints > 0;
+
+        if (l_DidDamage)
+        {
+            m_Life -= l_LifePoints;
+        }
+
         if (m_Life <= 0)
         {
             SetDieState();
+            return;
         }
-        else
+
+        if (l_PreviousState == TState.PATROL || l_PreviousState == TState.IDLE)
         {
-            SetHitState();
-            Debug.Log("Drone hit! Remaining life: " + m_Life);
-        }   
+            SetHitState(TState.ALERT);
+        }
+        else if (l_DidDamage)
+        {
+            SetHitState(l_PreviousState);
+        }
+
+        Debug.Log("Drone hit! Remaining life: " + m_Life);
     }
     public int GetLife()
     {
