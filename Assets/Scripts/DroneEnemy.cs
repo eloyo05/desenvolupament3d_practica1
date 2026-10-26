@@ -23,6 +23,8 @@ public class DroneEnemy : MonoBehaviour
     public float m_MaxChaseDistance = 20.0f;
     public float m_ShootMaxDistance = 8.0f;
     //CREAR EMPTY DE WAYPOYINT I DINS CREAR ELS WAYPOYINS QUE RECORRERÀ L'ENEMIC PER PATRULLAR (FOTO AL MOBIL 16/10) ARROSSEGARLOS A LA LLISTA DE L'INSPECTOR DEL SCRIPT DE DRONE ENEMY
+
+
     
     public int m_MaxLife = 50;
     int m_Life = 50;
@@ -53,6 +55,8 @@ public class DroneEnemy : MonoBehaviour
     public float m_DieFadeTime = 1.0f;
 
     float m_DieTimer = 0.0f;
+    Vector3 m_StartPosition;
+    Quaternion m_StartRotation;
     Vector3 m_StartScale;
 
     public Transform m_Eyes;
@@ -65,6 +69,8 @@ public class DroneEnemy : MonoBehaviour
     {
 
         m_NavMeshAgent = GetComponent<NavMeshAgent>();
+        m_StartPosition = transform.position;
+        m_StartRotation = transform.rotation;
         m_StartScale = transform.localScale;
     }
     private void Start()
@@ -368,9 +374,7 @@ public class DroneEnemy : MonoBehaviour
 
         if (m_DieTimer <= 0.0f)
         {
-            GameController.GetGameController().RemoveEnemy(this);
-
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
 
@@ -469,5 +473,35 @@ public class DroneEnemy : MonoBehaviour
     public int GetLife()
     {
         return m_Life;
+    }
+
+    public void RestartEnemy()
+    {
+        gameObject.SetActive(true);
+
+        transform.position = m_StartPosition;
+        transform.rotation = m_StartRotation;
+        transform.localScale = m_StartScale;
+
+        m_Life = m_MaxLife;
+
+        Collider[] l_Colliders =
+            GetComponentsInChildren<Collider>();
+
+        foreach (Collider l_Collider in l_Colliders)
+        {
+            l_Collider.enabled = true;
+        }
+
+        if (!m_NavMeshAgent.enabled)
+        {
+            m_NavMeshAgent.enabled = true;
+        }
+
+        m_NavMeshAgent.Warp(m_StartPosition);
+
+        m_AttackTimer = 0.0f;
+
+        SetPatrolState();
     }
 }

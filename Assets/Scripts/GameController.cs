@@ -45,7 +45,15 @@ public class GameController : MonoBehaviour
             {
                 m_Player.Restart();
             }
-        
+
+        for (int i = 0; i < m_Enemies.Count; ++i)
+        {
+            if (m_Enemies[i] != null)
+            {
+                m_Enemies[i].RestartEnemy();
+            }
+        }
+
 
         /*if (m_Fade != null)
         {

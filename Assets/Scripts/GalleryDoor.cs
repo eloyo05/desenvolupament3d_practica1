@@ -27,12 +27,7 @@ public class GalleryDoor : MonoBehaviour
         if (!m_IsOpen)
             return;
 
-        transform.localPosition =
-            Vector3.MoveTowards(
-                transform.localPosition,
-                m_OpenLocalPosition,
-                m_OpenSpeed * Time.deltaTime
-            );
+        transform.localPosition = Vector3.MoveTowards(transform.localPosition, m_OpenLocalPosition,m_OpenSpeed * Time.deltaTime);
     }
 
     public void OpenDoor()

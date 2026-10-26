@@ -8146,7 +8146,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 876224577}
-  - component: {fileID: 876224576}
   - component: {fileID: 876224578}
   - component: {fileID: 876224579}
   m_Layer: 0
@@ -8156,28 +8155,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!95 &876224576
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 876224575}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: b195e55cad50183439c4e8cd7e8d4310, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &876224577
 Transform:
   m_ObjectHideFlags: 0
@@ -8187,7 +8164,7 @@ Transform:
   m_GameObject: {fileID: 876224575}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.52152, y: -1.94262, z: -7.512932}
+  m_LocalPosition: {x: -6.52152, y: -1.94262, z: -8.003}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8214,8 +8191,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 5.65, y: 1, z: 5.5}
-  m_Center: {x: 1, y: -1.19, z: -2.47}
+  m_Size: {x: 5.65, y: 1, z: 7.16646}
+  m_Center: {x: 1, y: -1.19, z: 0.39459705}
 --- !u!114 &876224579
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8225,10 +8202,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 876224575}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fdd777acd2d27df49aa7d73b8d8be523, type: 3}
+  m_Script: {fileID: 11500000, guid: 1f020f11ea19c91478c5677c0aabf6b9, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorTrigger
-  doorAnimator: {fileID: 876224576}
+  m_EditorClassIdentifier: Assembly-CSharp::ProximityDoor
+  m_LeftDoor: {fileID: 828975250}
+  m_RightDoor: {fileID: 1396933022}
+  m_LeftOpenOffset: {x: -2, y: 0, z: 0}
+  m_RightOpenOffset: {x: 2, y: 0, z: 0}
+  m_OpenSpeed: 2
 --- !u!1 &882213351
 GameObject:
   m_ObjectHideFlags: 0
