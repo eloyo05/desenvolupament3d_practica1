@@ -27,7 +27,6 @@ public class TCDebugtimeScaler : MonoBehaviour
             }
         }
     }
-#else
-    sixseven tung tung tung sahur cocodrilo chacamuela batalla de aura
+
 #endif
 }

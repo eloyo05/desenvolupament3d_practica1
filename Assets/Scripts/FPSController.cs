@@ -1,4 +1,4 @@
-using NUnit.Framework;
+
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -45,6 +45,7 @@ public class FPSController : MonoBehaviour
     public int m_MaxMagazine = 25;
     public int m_Magazine;
     public int m_TotalAmmo = 100;
+    public int m_MaxTotalAmmo = 100;
     public CPoolElements m_HitParticlesPool;
 
     [Header("Animations")]
@@ -159,31 +160,26 @@ public class FPSController : MonoBehaviour
 
         bool CanReload()
         {
-            return true;
+            return m_Magazine < m_MaxMagazine &&
+                   m_TotalAmmo > 0;
         }
+
         bool MustReload()
         {
-
-            if (Input.GetKeyDown(m_ReloadKeyCode) && m_Magazine < m_MaxMagazine && m_TotalAmmo >= m_MaxMagazine)
-            {
-                int l_AmmoNeeded = m_MaxMagazine - m_Magazine;
-                m_Magazine = m_MaxMagazine;
-                m_TotalAmmo -= l_AmmoNeeded;
-                return true;
-            }
-            else if (Input.GetKeyDown(m_ReloadKeyCode) && m_Magazine < m_MaxMagazine && m_TotalAmmo < m_MaxMagazine)
-            {
-                m_Magazine += m_TotalAmmo;
-                m_TotalAmmo = 0;
-                return true;
-            }
-            else
-            { 
-                return false; 
-            }
+            return Input.GetKeyDown(m_ReloadKeyCode);
         }
+
         void Reload()
         {
+            int l_AmmoNeeded =
+                m_MaxMagazine - m_Magazine;
+
+            int l_AmmoToLoad =
+                Mathf.Min(l_AmmoNeeded, m_TotalAmmo);
+
+            m_Magazine += l_AmmoToLoad;
+            m_TotalAmmo -= l_AmmoToLoad;
+
             SetReloadWeaponAnimation();
         }
         bool CanShoot()
@@ -208,38 +204,46 @@ public class FPSController : MonoBehaviour
                 CreateShootHitParticles(l_RaycastHit.point, l_RaycastHit.normal);     */ //ABANS
             if (Physics.Raycast(l_Ray, out RaycastHit l_RaycastHit, m_MaxShootDistance, m_ShootLayerMask.value))
             {
-                if (l_RaycastHit.collider.CompareTag("HitCollider"))
-                {
-                    l_RaycastHit.collider.GetComponentInParent<HitCollider>().Hit();
-                }
-                else                
-                {
-                    CreateShootHitParticles(l_RaycastHit.point, l_RaycastHit.normal);                    
-                }
+                ShootingGalleryButton l_GalleryButton =
+                    l_RaycastHit.collider.GetComponentInParent<ShootingGalleryButton>();
 
-                ShootingGalleryButton l_GalleryButton = l_RaycastHit.collider.GetComponentInParent<ShootingGalleryButton>();
                 if (l_GalleryButton != null)
                 {
                     l_GalleryButton.Hit();
                     return;
                 }
 
-                ShootingGalleryTarget l_GalleryTarget = l_RaycastHit.collider.GetComponentInParent<ShootingGalleryTarget>();
+                ShootingGalleryTarget l_GalleryTarget =
+                    l_RaycastHit.collider.GetComponentInParent<ShootingGalleryTarget>();
 
                 if (l_GalleryTarget != null)
                 {
                     l_GalleryTarget.Hit();
+                    return;
                 }
+
+                HitCollider l_HitCollider =
+                    l_RaycastHit.collider.GetComponentInParent<HitCollider>();
+
+                if (l_HitCollider != null)
+                {
+                    l_HitCollider.Hit();
+                    return;
+                }
+
+                CreateShootHitParticles(
+                    l_RaycastHit.point,
+                    l_RaycastHit.normal);
             } //ARA
         }        
         UpdateLifeBarEnemies();
     }
-    void CreateShootHitParticles(Vector3 Position, Vector3 p_Normal)
+    void CreateShootHitParticles(Vector3 l_Position, Vector3 l_Normal)
     {
-        GameObject l_GameObject = m_HitParticlesPool.GetNextElement();      
+        GameObject l_GameObject = m_HitParticlesPool.GetNextElement();
         l_GameObject.SetActive(true);
-        l_GameObject.transform.position = Position;
-        l_GameObject.transform.rotation = Quaternion.LookRotation(p_Normal);
+        l_GameObject.transform.position = l_Position;
+        l_GameObject.transform.rotation = Quaternion.LookRotation(l_Normal);
     }
     void SetIdleWeaponAnimation()
     {
@@ -256,17 +260,42 @@ public class FPSController : MonoBehaviour
         m_Animation.CrossFadeQueued(m_IdleAnimationClip.name, 0.3f);
     }
 
-    void HurtPlayer(int damage)
+    public void HurtPlayer(int l_Damage)
     {
         if (m_Shield > 0)
         {
-            m_Shield -= damage * 0.75;
-            m_Health -= damage * 0.25;
+            double l_ShieldDamage =
+                l_Damage * 0.75;
+
+            double l_HealthDamage =
+                l_Damage * 0.25;
+
+            if (m_Shield >= l_ShieldDamage)
+            {
+                m_Shield -= l_ShieldDamage;
+                m_Health -= l_HealthDamage;
+            }
+            else
+            {
+                double l_RemainingDamage =
+                    l_ShieldDamage - m_Shield;
+
+                m_Shield = 0;
+
+                m_Health -=
+                    l_HealthDamage +
+                    l_RemainingDamage;
+            }
         }
         else
         {
-            m_Shield = 0;
-            m_Health -= damage;
+            m_Health -= l_Damage;
+        }
+
+        if (m_Health <= 0)
+        {
+            m_Health = 0;
+            Kill();
         }
     }
 
@@ -275,7 +304,8 @@ public class FPSController : MonoBehaviour
         if (other.CompareTag("Item"))
         {
             Item l_Item = other.GetComponent<Item>();
-            if(l_Item.CanPick() && l_Item!=null)
+
+            if (l_Item != null && l_Item.CanPick(this))
             {
                 l_Item.Pick(this);
             }
@@ -300,17 +330,40 @@ public class FPSController : MonoBehaviour
         transform.position = m_StartPosition;
         transform.rotation = m_StartRotation;
         m_CharacterController.enabled = true;
+
+        m_VerticalSpeed = 0.0f;
+
+        m_Health = m_MaxHealth;
+        m_Shield = m_MaxShield;
+
+        m_Magazine = m_MaxMagazine;
+        m_TotalAmmo = m_MaxTotalAmmo;
     }
     void UpdateLifeBarEnemies()
     {
         GameController l_GameController = GameController.GetGameController();
+
+        if (l_GameController == null)
+            return;
+
+        InGameUI l_InGameUI = l_GameController.GetInGameUI();
+
+        if (l_InGameUI == null)
+            return;
+
         List<DroneEnemy> l_Enemies = l_GameController.GetEnemies();
 
-        LifeBarElementUI l_LifeBarElementUI = l_GameController.GetInGameUI().m_LifeBarElementUI;
+        if (l_Enemies == null || l_Enemies.Count == 0)
+            return;
+
+        LifeBarElementUI l_LifeBarElementUI = l_InGameUI.m_LifeBarElementUI;
         l_LifeBarElementUI.Hide();
 
         foreach(DroneEnemy l_Enemy in l_Enemies)
         {
+            if (l_Enemy == null)
+                continue;
+
             Vector3 l_ViewportPoint = m_Camera.WorldToViewportPoint(l_Enemy.m_LifeBarPosition.position);
             bool l_EnemyIsVisible = l_ViewportPoint.z > 0.0f && l_ViewportPoint.x > 0 && l_ViewportPoint.x <= 1 && l_ViewportPoint.y > 0 && l_ViewportPoint.y < 1;
 
