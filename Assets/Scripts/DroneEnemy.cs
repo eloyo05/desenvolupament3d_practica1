@@ -75,7 +75,12 @@ public class DroneEnemy : MonoBehaviour
     }
     private void Update()
     {
-        switch(m_CurrentState)
+        if (m_AttackTimer > 0.0f)
+        {
+            m_AttackTimer -= Time.deltaTime;
+        }
+
+        switch (m_CurrentState)
         {
             case TState.IDLE:
                 UpdateIdleState();
@@ -185,7 +190,7 @@ public class DroneEnemy : MonoBehaviour
 
         m_NavMeshAgent.isStopped = true;
 
-        m_AttackTimer = 0.0f;
+        
     }
     void SetChaseState()
     {
@@ -282,7 +287,7 @@ public class DroneEnemy : MonoBehaviour
             transform.rotation = Quaternion.RotateTowards(transform.rotation,l_TargetRotation,m_AlertRotationSpeed * Time.deltaTime);
         }
 
-        m_AttackTimer -= Time.deltaTime;
+        
 
         if (m_AttackTimer <= 0.0f)
         {

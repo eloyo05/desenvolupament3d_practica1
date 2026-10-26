@@ -266,29 +266,17 @@ public class FPSController : MonoBehaviour
 
     public void HurtPlayer(int l_Damage)
     {
+        if (m_IsDead)
+            return;
+
         if (m_Shield > 0)
         {
-            double l_ShieldDamage =
-                l_Damage * 0.75;
+            m_Shield -= l_Damage * 0.75;
+            m_Health -= l_Damage * 0.25;
 
-            double l_HealthDamage =
-                l_Damage * 0.25;
-
-            if (m_Shield >= l_ShieldDamage)
+            if (m_Shield < 0)
             {
-                m_Shield -= l_ShieldDamage;
-                m_Health -= l_HealthDamage;
-            }
-            else
-            {
-                double l_RemainingDamage =
-                    l_ShieldDamage - m_Shield;
-
                 m_Shield = 0;
-
-                m_Health -=
-                    l_HealthDamage +
-                    l_RemainingDamage;
             }
         }
         else
