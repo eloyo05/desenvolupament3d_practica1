@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class ShootingGalleryController : MonoBehaviour
 {
@@ -14,6 +15,12 @@ public class ShootingGalleryController : MonoBehaviour
 
     [Header("Door")]
     public GalleryDoor m_Door;
+
+    [Header("UI")]
+    public GameObject m_GalleryHUD;
+    public TMP_Text m_ScoreText;
+    public TMP_Text m_TimeText;
+    public TMP_Text m_MessageText;
 
     bool m_IsPlaying = false;
     bool m_IsResetting = false;
@@ -54,6 +61,8 @@ public class ShootingGalleryController : MonoBehaviour
         {
             UpdateReset();
         }
+
+        UpdateUI();
     }
 
     void UpdateGame()
@@ -221,65 +230,40 @@ public class ShootingGalleryController : MonoBehaviour
         m_PlayerInsideGallery = l_Inside;
     }
 
-    private void OnGUI()
+    void UpdateUI()
     {
+        if (m_GalleryHUD == null)
+            return;
+
+        m_GalleryHUD.SetActive(m_PlayerInsideGallery);
+
         if (!m_PlayerInsideGallery)
             return;
 
-        GUIStyle l_HUDStyle =
-            new GUIStyle(GUI.skin.label);
-
-        l_HUDStyle.fontSize = 25;
-        l_HUDStyle.fontStyle = FontStyle.Bold;
-        l_HUDStyle.normal.textColor = Color.white;
-        l_HUDStyle.alignment = TextAnchor.MiddleCenter;
-
-        if (m_IsPlaying)
+        if (m_ScoreText != null)
         {
-            GUI.Label(
-                new Rect(
-                    Screen.width / 2.0f - 200,
-                    20,
-                    400,
-                    35),
-                "Punts: " + m_Score +
-                " / " + m_ScoreToWin,
-                l_HUDStyle
-            );
+            m_ScoreText.gameObject.SetActive(m_IsPlaying);
 
-            GUI.Label(
-                new Rect(
-                    Screen.width / 2.0f - 200,
-                    55,
-                    400,
-                    35),
-                "Temps: " +
-                Mathf.CeilToInt(m_TimeLeft),
-                l_HUDStyle
-            );
+            m_ScoreText.text ="Punts: " +m_Score +  " / " +  m_ScoreToWin;
         }
 
-        if (m_Message != "")
+        if (m_TimeText != null)
         {
-            GUIStyle l_MessageStyle =
-                new GUIStyle(GUI.skin.label);
+            m_TimeText.gameObject.SetActive(m_IsPlaying);
 
-            l_MessageStyle.fontSize = 36;
-            l_MessageStyle.fontStyle = FontStyle.Bold;
-            l_MessageStyle.normal.textColor = Color.white;
-            l_MessageStyle.alignment =
-                TextAnchor.MiddleCenter;
-            l_MessageStyle.wordWrap = true;
+            m_TimeText.text = "Temps: " + Mathf.CeilToInt(m_TimeLeft); //QUE ES CeilToInt?
+        }
 
-            GUI.Label(
-                new Rect(
-                    Screen.width / 2.0f - 400,
-                    Screen.height / 2.0f - 75,
-                    800,
-                    150),
-                m_Message,
-                l_MessageStyle
-            );
+        if (m_MessageText != null)
+        {
+            bool l_ShowMessage = m_Message != "";
+
+            m_MessageText.gameObject.SetActive(l_ShowMessage);
+
+            if (l_ShowMessage)
+            {
+                m_MessageText.text = m_Message;
+            }
         }
     }
 }

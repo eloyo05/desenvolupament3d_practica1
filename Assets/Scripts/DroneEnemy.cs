@@ -51,9 +51,9 @@ public class DroneEnemy : MonoBehaviour
 
     [Header("Die")]
     public float m_DieFadeTime = 1.0f;
-    float m_DieTimer = 0.0f;
 
-    Renderer[] m_Renderers;
+    float m_DieTimer = 0.0f;
+    Vector3 m_StartScale;
 
     public Transform m_Eyes;
     public float m_ViewDistance = 20.0f;
@@ -65,7 +65,7 @@ public class DroneEnemy : MonoBehaviour
     {
 
         m_NavMeshAgent = GetComponent<NavMeshAgent>();
-        m_Renderers = GetComponentsInChildren<Renderer>();
+        m_StartScale = transform.localScale;
     }
     private void Start()
     {
@@ -206,10 +206,16 @@ public class DroneEnemy : MonoBehaviour
     }
     void SetDieState()
     {
+        if (m_CurrentState == TState.DIE)
+            return;
+
         m_CurrentState = TState.DIE;
 
-        m_NavMeshAgent.isStopped = true;
-        m_NavMeshAgent.enabled = false;
+        if (m_NavMeshAgent.enabled)
+        {
+            m_NavMeshAgent.isStopped = true;
+            m_NavMeshAgent.enabled = false;
+        }
 
         Collider[] l_Colliders = GetComponentsInChildren<Collider>();
 
@@ -351,24 +357,13 @@ public class DroneEnemy : MonoBehaviour
     {
         m_DieTimer -= Time.deltaTime;
 
-        float l_Alpha = Mathf.Clamp01(m_DieTimer/ m_DieFadeTime);
+        float l_NormalizedTime = Mathf.Clamp01( m_DieTimer /m_DieFadeTime);
 
-        foreach (Renderer l_Renderer in m_Renderers)
-        {
-            foreach (Material l_Material in l_Renderer.materials)
-            {
-                Color l_Color = l_Material.color;
-
-                l_Color.a = l_Alpha;
-
-                l_Material.color = l_Color;
-            }
-        }
+        transform.localScale = m_StartScale *l_NormalizedTime;
 
         if (m_DieTimer <= 0.0f)
         {
-            GameController
-                .GetGameController().RemoveEnemy(this);
+            GameController.GetGameController().RemoveEnemy(this);
 
             Destroy(gameObject);
         }

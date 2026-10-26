@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 
 public class TCDebugtimeScaler : MonoBehaviour
 {
@@ -29,4 +29,4 @@ public class TCDebugtimeScaler : MonoBehaviour
     }
 
 #endif
-}
+}*/

@@ -28,14 +28,25 @@ public class GameController : MonoBehaviour
     static public GameController GetGameController()
     {
         return m_GameController;
-    }    
+    }
     public void Restart()
     {
         Debug.Log("Restarting game...");
-        for (int i = 0; i < m_DestroyObjects.childCount; ++i)        
-            GameObject.Destroy(m_DestroyObjects.GetChild(i).gameObject);
-        m_Player.Restart();
-        StartCoroutine(m_Fade.FadeOut());
+
+        for (int i = 0; i < m_DestroyObjects.childCount;++i)
+        {
+            Destroy( m_DestroyObjects.GetChild(i).gameObject);
+        }
+
+        if (m_Player != null)
+        {
+            m_Player.Restart();
+        }
+
+        if (m_Fade != null)
+        {
+            StartCoroutine(m_Fade.FadeOut());
+        }
     }
     private void Update()
     {
