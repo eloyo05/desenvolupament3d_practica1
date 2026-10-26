@@ -65,6 +65,10 @@ public class DroneEnemy : MonoBehaviour
     [Range(-1.0f, 1.0f)]
     public float m_MinViewDot = 0.5f;
 
+    [Header("Drop item")]
+    public GameObject m_AmmoItemPrefab;
+    private bool m_DroppedItem = false;
+
     private void Awake()
     {
 
@@ -371,6 +375,20 @@ public class DroneEnemy : MonoBehaviour
         float l_NormalizedTime = Mathf.Clamp01( m_DieTimer /m_DieFadeTime);
 
         transform.localScale = m_StartScale *l_NormalizedTime;
+
+        Vector3 l_DropPosition = transform.position;
+        l_DropPosition.y += 0.75f;
+
+        if (!m_DroppedItem)
+        {
+            m_DroppedItem = true;
+
+            Instantiate(
+                m_AmmoItemPrefab,
+                l_DropPosition,
+                Quaternion.identity
+            );
+        }
 
         if (m_DieTimer <= 0.0f)
         {

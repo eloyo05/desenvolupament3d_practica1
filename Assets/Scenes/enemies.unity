@@ -5826,6 +5826,7 @@ MonoBehaviour:
   m_Eyes: {fileID: 1710773175}
   m_ViewDistance: 20
   m_MinViewDot: 0.5
+  m_AmmoItemPrefab: {fileID: 8985128390824704890, guid: 2eb969ae7b5bb804b8735b267120c320, type: 3}
 --- !u!195 &618167017
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -7194,6 +7195,7 @@ MonoBehaviour:
   m_Eyes: {fileID: 1673580496}
   m_ViewDistance: 20
   m_MinViewDot: 0.5
+  m_AmmoItemPrefab: {fileID: 8985128390824704890, guid: 2eb969ae7b5bb804b8735b267120c320, type: 3}
 --- !u!195 &783465207
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -16887,6 +16889,7 @@ MonoBehaviour:
   m_Eyes: {fileID: 388596007}
   m_ViewDistance: 20
   m_MinViewDot: 0.5
+  m_AmmoItemPrefab: {fileID: 8985128390824704890, guid: 2eb969ae7b5bb804b8735b267120c320, type: 3}
 --- !u!1 &1553347364
 GameObject:
   m_ObjectHideFlags: 0
