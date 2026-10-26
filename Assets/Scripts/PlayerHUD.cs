@@ -1,5 +1,7 @@
+
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class PlayerHUD : MonoBehaviour
 {
@@ -9,6 +11,11 @@ public class PlayerHUD : MonoBehaviour
     public TMP_Text m_HealthText;
     public TMP_Text m_ShieldText;
     public TMP_Text m_AmmoText;
+
+    [Header("Icons")]
+    public Image m_HealthIcon;
+    public Image m_ShieldIcon;
+    public Image m_AmmoIcon;
 
     private void Update()
     {
