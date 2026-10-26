@@ -5286,6 +5286,10 @@ MonoBehaviour:
   m_HearingDistance: 10
   m_AlertTime: 3
   m_AlertRotationSpeed: 120
+  m_AttackDamage: 20
+  m_AttackCooldown: 1
+  m_HitTime: 0.25
+  m_DieFadeTime: 1
   m_Eyes: {fileID: 1710773175}
   m_ViewDistance: 20
   m_MinViewDot: 0.5
@@ -6506,6 +6510,10 @@ MonoBehaviour:
   m_HearingDistance: 10
   m_AlertTime: 3
   m_AlertRotationSpeed: 120
+  m_AttackDamage: 20
+  m_AttackCooldown: 1
+  m_HitTime: 0.25
+  m_DieFadeTime: 1
   m_Eyes: {fileID: 1673580496}
   m_ViewDistance: 20
   m_MinViewDot: 0.5
@@ -15550,6 +15558,10 @@ MonoBehaviour:
   m_HearingDistance: 10
   m_AlertTime: 3
   m_AlertRotationSpeed: 120
+  m_AttackDamage: 20
+  m_AttackCooldown: 1
+  m_HitTime: 0.25
+  m_DieFadeTime: 1
   m_Eyes: {fileID: 388596007}
   m_ViewDistance: 20
   m_MinViewDot: 0.5
@@ -15688,6 +15700,7 @@ MonoBehaviour:
   m_MaxMagazine: 25
   m_Magazine: 25
   m_TotalAmmo: 100
+  m_MaxTotalAmmo: 100
   m_Animation: {fileID: 1591748596}
   m_IdleAnimationClip: {fileID: 7400000, guid: 7fa2f4e007450c745b2318ee75a8d4a2, type: 2}
   m_ShootAnimationClip: {fileID: 7400000, guid: d3073a736736a4644acdfc31a53f1907, type: 2}

@@ -10,6 +10,7 @@ public class DoorTrigger : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             doorAnimator.SetTrigger("OpenDoor");
+            Debug.Log("El jugador ha entrat a la zona de la porta");
         }
     }
 }
