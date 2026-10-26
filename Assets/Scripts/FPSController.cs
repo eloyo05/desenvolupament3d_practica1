@@ -59,6 +59,7 @@ public class FPSController : MonoBehaviour
     public double m_MaxHealth = 100;
     public double m_Shield = 100;
     public double m_MaxShield = 100;
+    bool m_IsDead = false;
 
     private void Awake()
     {
@@ -81,6 +82,9 @@ public class FPSController : MonoBehaviour
     }
     private void Update()
     {
+        if (m_IsDead)
+            return;
+
         if (Input.GetKeyDown(m_DebugLockAngleKeyCode))
             m_AngleLocked = !m_AngleLocked;
         if (Input.GetKeyDown(m_DebugLogCursorKeyCode))
@@ -262,29 +266,17 @@ public class FPSController : MonoBehaviour
 
     public void HurtPlayer(int l_Damage)
     {
+        if (m_IsDead)
+            return;
+
         if (m_Shield > 0)
         {
-            double l_ShieldDamage =
-                l_Damage * 0.75;
+            m_Shield -= l_Damage * 0.75;
+            m_Health -= l_Damage * 0.25;
 
-            double l_HealthDamage =
-                l_Damage * 0.25;
-
-            if (m_Shield >= l_ShieldDamage)
+            if (m_Shield < 0)
             {
-                m_Shield -= l_ShieldDamage;
-                m_Health -= l_HealthDamage;
-            }
-            else
-            {
-                double l_RemainingDamage =
-                    l_ShieldDamage - m_Shield;
-
                 m_Shield = 0;
-
-                m_Health -=
-                    l_HealthDamage +
-                    l_RemainingDamage;
             }
         }
         else
@@ -299,32 +291,44 @@ public class FPSController : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider l_Other)
     {
-        if (other.CompareTag("Item"))
+        if (l_Other.CompareTag("Item"))
         {
-            Item l_Item = other.GetComponent<Item>();
+            Item l_Item = l_Other.GetComponent<Item>();
 
             if (l_Item != null && l_Item.CanPick(this))
             {
                 l_Item.Pick(this);
             }
         }
-        else if (other.CompareTag("DeadZone"))
+        else if (l_Other.CompareTag("DeadZone"))
         {
+            Debug.Log("PLAYER HA ENTRAT A DEADZONE");
             Kill();
         }
     }
 
-    void Kill()
+    /*void Kill()
     {
         StartCoroutine(GameController.GetGameController().GetFade().FadeIn(() =>
         {
             GameController.GetGameController().GetFade().gameObject.SetActive(false);
             GameController.GetGameController().Restart();
         }));
+    }*/ //ANTIC KILL()
+
+    public void Kill()
+    {
+        if (m_IsDead)
+            return;
+
+        m_IsDead = true;
+        m_Health = 0;
+
+        GameController.GetGameController().Restart();
     }
-    public void Restart()
+    /*public void Restart()
     {
         m_CharacterController.enabled = false;
         transform.position = m_StartPosition;
@@ -338,6 +342,31 @@ public class FPSController : MonoBehaviour
 
         m_Magazine = m_MaxMagazine;
         m_TotalAmmo = m_MaxTotalAmmo;
+    }*/ //ANTIC RESTART()
+
+    public void Restart()
+    {
+        m_CharacterController.enabled = false;
+
+        transform.position = m_StartPosition;
+        transform.rotation = m_StartRotation;
+
+        m_Yaw = m_StartRotation.eulerAngles.y;
+        m_Pitch = 0.0f;
+
+        m_PitchController.localRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+
+        m_VerticalSpeed = 0.0f;
+
+        m_Health = m_MaxHealth;
+        m_Shield = m_MaxShield;
+
+        m_Magazine = m_MaxMagazine;
+        m_TotalAmmo = m_MaxTotalAmmo;
+
+        m_IsDead = false;
+
+        m_CharacterController.enabled = true;
     }
     void UpdateLifeBarEnemies()
     {
@@ -362,6 +391,9 @@ public class FPSController : MonoBehaviour
         foreach(DroneEnemy l_Enemy in l_Enemies)
         {
             if (l_Enemy == null)
+                continue;
+
+            if (l_Enemy.GetLife() <= 0)
                 continue;
 
             Vector3 l_ViewportPoint = m_Camera.WorldToViewportPoint(l_Enemy.m_LifeBarPosition.position);
