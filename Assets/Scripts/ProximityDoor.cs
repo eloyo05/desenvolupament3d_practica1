@@ -20,6 +20,7 @@ public class ProximityDoor : MonoBehaviour
     Vector3 m_LeftOpenPosition;
     Vector3 m_RightOpenPosition;
 
+    FPSController m_Player;
     bool m_PlayerInside = false;
     bool m_HasKey = false;
 
@@ -34,6 +35,15 @@ public class ProximityDoor : MonoBehaviour
 
     private void Update()
     {
+        if (m_PlayerInside && m_RequiresKey)
+        {
+            KeyInventory l_Inventory =
+                m_Player.GetComponent<KeyInventory>();
+
+            m_HasKey = l_Inventory != null &&
+                       l_Inventory.m_HasSpecialKey;
+        }
+
         if (m_PlayerInside && (!m_RequiresKey || m_HasKey))
         {
             OpenDoor();
@@ -78,6 +88,8 @@ public class ProximityDoor : MonoBehaviour
     {
         FPSController l_Player =
             l_Other.GetComponentInParent<FPSController>();
+
+        m_Player = l_Player;
 
         if (l_Player != null)
         {
