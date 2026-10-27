@@ -13,12 +13,12 @@ public class KeyDoorSign : MonoBehaviour
 
         if (m_KeyInventory.m_HasSpecialKey)
         {
-            m_Text.text = "UNLOCKED";
+            m_Text.text = "DESBLOQUEJAT";
             m_Text.color = Color.green;
         }
         else
         {
-            m_Text.text = "LOCKED";
+            m_Text.text = "BLOQUEJAT";
             m_Text.color = Color.red;
         }
     }
