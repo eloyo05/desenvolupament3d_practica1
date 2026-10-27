@@ -519,6 +519,7 @@ public class DroneEnemy : MonoBehaviour
         m_NavMeshAgent.Warp(m_StartPosition);
 
         m_AttackTimer = 0.0f;
+        m_DroppedItem = false;
 
         SetPatrolState();
     }

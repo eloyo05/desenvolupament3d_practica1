@@ -344,6 +344,14 @@ public class FPSController : MonoBehaviour
         m_TotalAmmo = m_MaxTotalAmmo;
     }*/ //ANTIC RESTART()
 
+    public void SetCheckpoint(Transform l_Checkpoint)
+    {
+        m_StartPosition = l_Checkpoint.position;
+
+        m_StartRotation =l_Checkpoint.rotation;
+
+        Debug.Log("Checkpoint!");
+    }
     public void Restart()
     {
         m_CharacterController.enabled = false;
