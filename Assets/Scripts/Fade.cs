@@ -11,7 +11,6 @@ public class Fade : MonoBehaviour
     private void Start()
     {
         m_Animation = GetComponent<Animation>();
-        //GameController.GetGameController().SetFade(this);
         gameObject.SetActive(false);
     }
     public IEnumerator FadeIn(OnFadeFinishedFn _OnFadeFinishedFn)

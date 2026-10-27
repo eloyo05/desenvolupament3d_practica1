@@ -251,7 +251,7 @@ public class ShootingGalleryController : MonoBehaviour
         {
             m_TimeText.gameObject.SetActive(m_IsPlaying);
 
-            m_TimeText.text = "Temps: " + Mathf.CeilToInt(m_TimeLeft); //QUE ES CeilToInt?
+            m_TimeText.text = "Temps: " + Mathf.CeilToInt(m_TimeLeft);
         }
 
         if (m_MessageText != null)

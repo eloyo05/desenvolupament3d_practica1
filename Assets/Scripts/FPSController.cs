@@ -89,11 +89,6 @@ public class FPSController : MonoBehaviour
             m_AngleLocked = !m_AngleLocked;
         if (Input.GetKeyDown(m_DebugLogCursorKeyCode))
         {
-            /* (Input.GetKeyDown(m_DebugLogCursorKeyCode))
-                Cursor.lockState = CursorLockMode.Locked;
-            else
-                Cursor.lockState = CursorLockMode.None;*/
-
             Cursor.lockState = Cursor.lockState == CursorLockMode.Locked ? CursorLockMode.None : CursorLockMode.Locked;
         }
 
@@ -137,7 +132,7 @@ public class FPSController : MonoBehaviour
         float l_Speed = m_Speed;
         if (Input.GetKey(m_SprintKeyCode))
             l_Speed = m_SprintSpeed;
-        if(Input.GetKeyDown(m_JumpKeyCode) /*&& m_VerticalSpeed == 0.0f*/ && m_CharacterController.isGrounded)
+        if(Input.GetKeyDown(m_JumpKeyCode) && m_CharacterController.isGrounded)
             m_VerticalSpeed = m_JumpSpeed;
 
         m_VerticalSpeed = m_VerticalSpeed + Physics.gravity.y * Time.deltaTime;
@@ -148,7 +143,7 @@ public class FPSController : MonoBehaviour
         CollisionFlags l_CollisionFlags = m_CharacterController.Move(l_Direction);
         if((l_CollisionFlags & CollisionFlags.CollidedBelow) != 0)
         m_VerticalSpeed = 0.0f;
-        else if((l_CollisionFlags & CollisionFlags.CollidedAbove) != 0 && m_VerticalSpeed > 0.0f) //màscara binària
+        else if((l_CollisionFlags & CollisionFlags.CollidedAbove) != 0 && m_VerticalSpeed > 0.0f)
             m_VerticalSpeed = 0.0f;
 
         
@@ -204,8 +199,6 @@ public class FPSController : MonoBehaviour
 
             Ray l_Ray = m_Camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.0f));
 
-            /*if (Physics.Raycast(l_Ray, out RaycastHit l_RaycastHit, m_MaxShootDistance, m_ShootLayerMask.value))            
-                CreateShootHitParticles(l_RaycastHit.point, l_RaycastHit.normal);     */ //ABANS
             if (Physics.Raycast(l_Ray, out RaycastHit l_RaycastHit, m_MaxShootDistance, m_ShootLayerMask.value))
             {
                 ShootingGalleryButton l_GalleryButton =
@@ -238,7 +231,7 @@ public class FPSController : MonoBehaviour
                 CreateShootHitParticles(
                     l_RaycastHit.point,
                     l_RaycastHit.normal);
-            } //ARA
+            }
         }        
         UpdateLifeBarEnemies();
     }
@@ -309,15 +302,6 @@ public class FPSController : MonoBehaviour
         }
     }
 
-    /*void Kill()
-    {
-        StartCoroutine(GameController.GetGameController().GetFade().FadeIn(() =>
-        {
-            GameController.GetGameController().GetFade().gameObject.SetActive(false);
-            GameController.GetGameController().Restart();
-        }));
-    }*/ //ANTIC KILL()
-
     public void Kill()
     {
         if (m_IsDead)
@@ -328,22 +312,7 @@ public class FPSController : MonoBehaviour
 
         GameController.GetGameController().Restart();
     }
-    /*public void Restart()
-    {
-        m_CharacterController.enabled = false;
-        transform.position = m_StartPosition;
-        transform.rotation = m_StartRotation;
-        m_CharacterController.enabled = true;
-
-        m_VerticalSpeed = 0.0f;
-
-        m_Health = m_MaxHealth;
-        m_Shield = m_MaxShield;
-
-        m_Magazine = m_MaxMagazine;
-        m_TotalAmmo = m_MaxTotalAmmo;
-    }*/ //ANTIC RESTART()
-
+   
     public void SetCheckpoint(Transform l_Checkpoint)
     {
         m_StartPosition = l_Checkpoint.position;

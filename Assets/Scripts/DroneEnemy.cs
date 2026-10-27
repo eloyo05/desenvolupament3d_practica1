@@ -22,10 +22,7 @@ public class DroneEnemy : MonoBehaviour
     public float m_MinAttackDistance = 5.0f;
     public float m_MaxChaseDistance = 20.0f;
     public float m_ShootMaxDistance = 8.0f;
-    //CREAR EMPTY DE WAYPOYINT I DINS CREAR ELS WAYPOYINS QUE RECORRERÀ L'ENEMIC PER PATRULLAR (FOTO AL MOBIL 16/10) ARROSSEGARLOS A LA LLISTA DE L'INSPECTOR DEL SCRIPT DE DRONE ENEMY
-
-
-    
+     
     public int m_MaxLife = 50;
     int m_Life = 50;
     public Transform m_LifeBarPosition;
@@ -71,7 +68,6 @@ public class DroneEnemy : MonoBehaviour
 
     private void Awake()
     {
-
         m_NavMeshAgent = GetComponent<NavMeshAgent>();
         m_StartPosition = transform.position;
         m_StartRotation = transform.rotation;
@@ -144,11 +140,7 @@ public class DroneEnemy : MonoBehaviour
         if (HasArrivedToWaypoint())
             MoveToNextPatrolPosition();
     }
-    /*bool HasArrivedToWaypoint()
-    {
-        return m_NavMeshAgent.hasPath && m_NavMeshAgent.pathStatus == UnityEngine.AI.NavMeshPathStatus.PathComplete;
-    }*/ //AIXO ES EL QUE TENIEM DE CLASSE QUE NO FUNCIONA
-
+   
     bool HasArrivedToWaypoint()
     {
         if (m_NavMeshAgent.pathPending)
@@ -160,12 +152,9 @@ public class DroneEnemy : MonoBehaviour
 
         return !m_NavMeshAgent.hasPath ||
                m_NavMeshAgent.velocity.sqrMagnitude < 0.01f;
-    } //AIXO HO HA FET EL XAT I SI FUNCIONA
+    }
     void MoveToNextPatrolPosition()
     {
-        /*m_CurrentPatrolId++;
-        if (m_CurrentPatrolId == m_Waypoints.Count)
-            m_CurrentPatrolId = 0;*/
         m_CurrentPatrolId = (m_CurrentPatrolId + 1) % m_Waypoints.Count;
         m_NavMeshAgent.destination = m_Waypoints[m_CurrentPatrolId].position;
     }

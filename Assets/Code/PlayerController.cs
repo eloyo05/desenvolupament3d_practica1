@@ -79,13 +79,13 @@ public class PlayerController : MonoBehaviour
         l_Movement.y=m_VerticalSpeed*Time.deltaTime;
         
 		CollisionFlags l_CollisionFlags=m_CharacterController.Move(l_Movement);
-        if(m_VerticalSpeed<0.0f && (l_CollisionFlags & CollisionFlags.Below)!=0) //si estoy cayendo y colisiono con el suelo
+        if(m_VerticalSpeed<0.0f && (l_CollisionFlags & CollisionFlags.Below)!=0)
         {
             m_VerticalSpeed=0.0f;
             if(Input.GetKeyDown(m_JumpKeycode))
                 m_VerticalSpeed=m_JumpSpeed;
         }
-        else if(m_VerticalSpeed>0.0f && (l_CollisionFlags & CollisionFlags.Above)!=0) //si estoy subiendo y colision con un techo
+        else if(m_VerticalSpeed>0.0f && (l_CollisionFlags & CollisionFlags.Above)!=0)
             m_VerticalSpeed=0.0f;
 
     }
